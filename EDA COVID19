@@ -1,0 +1,38 @@
+--The dataset for this project has been acquired from [this link](www.ourworldindata.org) 
+
+--Firstly, I imported the dataset into excel and I split up the dataset into two - covid_deaths,covid_vaccinations
+
+--Finding death % and % of population infected  
+select location,date,total_cases,total_deaths,new_cases,population,(total_deaths/total_cases)*100 as deathpercent ,
+(total_cases/population)*100 as percentpopulationinfected
+from `portfolio-380906.COVID.covid_deaths`
+--where location="India"
+order by location ,date desc
+
+
+-- Looking at countries with highest(max) population infected rate compared to population
+select location,population,max(total_cases) as highestinfection ,max((total_cases/population))*100 as percentpopulationinfected
+from `portfolio-380906.COVID.covid_deaths`
+group by location,population
+order by percentpopulationinfected desc
+
+--Finding highest death count per population(countries)
+select location,max(total_cases)as Totalcases,max(total_deaths)as Totaldeaths
+from `portfolio-380906.COVID.covid_deaths`
+where continent is not null
+group by location
+order by Totaldeaths desc
+
+-- Finding continent wise
+select continent,max(total_deaths)as Totaldeaths
+from `portfolio-380906.COVID.covid_deaths`
+where continent is not null
+group by continent
+order by Totaldeaths desc
+
+--Find global death percentage
+select date,sum(new_cases)as Totalcases,sum(new_deaths) as Totaldeaths ,nullif(sum(new_deaths),0)/nullif(sum(new_cases),0)*100 as Deathpercentage
+from `portfolio-380906.COVID.covid_deaths`
+where continent is not null
+group by date
+order by date desc
